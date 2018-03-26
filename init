@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+# P.O.SH - a piece of shcript
+# (c) 2018 Dubo Dubon Duponey <farcloser.root@gmail.com>
+# Distributed under the terms of the MIT license
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+
+# Source profile if here
+[ ! -f ~/.profile ] || source ~/.profile
+
+# Enforce XCode command line tools to be here
+while [ -z "$(which git)" ]; do
+
+  git 2>/dev/null 1>&2
+
+  [ -z "$TERM" ] || tput setaf 3
+  echo "$(date) WARNING: You need to install XCode command line tools. You should be prompted to do so now."
+  echo "Hit enter when installation completes."
+  [ -z "$TERM" ] || tput op
+  read
+
+done
+
+[ -z "$TERM" ] || tput setaf 2
+echo "$(date) INFO: XCode command line tools is properly installed."
+[ -z "$TERM" ] || tput op
+
+# Have homebrew if not here
+if [ -z "$(which brew)" ]; then
+
+  [ -z "$TERM" ] || tput setaf 3
+  echo "$(date) WARNING: You are missing homebrew. Going to install."
+  [ -z "$TERM" ] || tput op
+
+  [ ! -z "$POSH_TOKEN" ] || read -p " > Your github api token for homebrew: " POSH_TOKEN
+  [ ! -z "$POSH_TMP" ] || read -p " > Where to hold temporary files for homebrew [default to ~/tmp]: " POSH_TMP
+  [ ! -z "$POSH_BIN" ] || read -p " > Where to install homebrew [default to ~/Applications/bin]: " POSH_BIN
+
+  [ ! -z "$POSH_TMP" ] || POSH_TMP=~/tmp
+  [ ! -z "$POSH_BIN" ] || POSH_BIN=~/Applications/bin
+
+  mkdir -p "${POSH_BIN}/homebrew" 2>/dev/null
+  mkdir -p "${POSH_TMP}/cache/homebrew" 2>/dev/null
+  mkdir -p "${POSH_TMP}/tmp/homebrew" 2>/dev/null
+  mkdir -p "${POSH_TMP}/log/homebrew" 2>/dev/null
+  if  [ ! -d "${POSH_BIN}/homebrew" ] || \
+      [ ! -d "${POSH_TMP}/cache/homebrew" ] || \
+      [ ! -d "${POSH_TMP}/tmp/homebrew" ] || \
+      [ ! -d "${POSH_TMP}/log/homebrew" ]; then
+    [ -z "$TERM" ] || tput setaf 1
+    echo "$(date) FATAL: Failed to create folders. Check your permissions."
+    [ -z "$TERM" ] || tput op
+    exit 1
+  fi
+
+  cd "${POSH_BIN}"
+  curl -s -S -L https://github.com/mxcl/homebrew/tarball/master 2>/dev/null | tar xz --strip 1 -C homebrew
+  cd - > /dev/null
+
+  if [ ! -f "${POSH_BIN}/homebrew/bin/brew" ]; then
+    [ -z "$TERM" ] || tput setaf 1
+    echo "$(date) FATAL: Failed to retrieve homebrew from github. Network down?"
+    [ -z "$TERM" ] || tput op
+    exit 1
+  fi
+
+  rm -Rf ${POSH_BIN}/homebrew/share/doc/homebrew
+
+  ${POSH_BIN}/homebrew/bin/brew update
+  ${POSH_BIN}/homebrew/bin/brew install bash-completion
+
+  cat <<- EOF > ~/.posh_brew
+  # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+  # ★ kingpin ＆ homebrew        ★
+  # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+
+  export POSH_TMP=${POSH_TMP}
+  export POSH_BIN=${POSH_BIN}
+
+  export PATH=\${POSH_BIN}/homebrew/bin:\${POSH_BIN}/homebrew/sbin:\${PATH}
+  export HOMEBREW_GITHUB_API_TOKEN=${POSH_TOKEN}
+  export HOMEBREW_CACHE=\${POSH_TMP}/cache/homebrew
+  export HOMEBREW_TEMP=\${POSH_TMP}/tmp/homebrew
+  export HOMEBREW_LOGS=\${POSH_TMP}/log/homebrew
+  . \$(brew --prefix)/etc/bash_completion
+EOF
+
+  if [[ -z "$(cat .profile | grep posh_brew)" ]]; then
+    cat <<- EOF >> ~/.profile
+    # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+    # ★ kingpin                    ★
+    # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+    . ~/.posh_brew
+EOF
+  fi
+
+  source ~/.profile
+fi
+
+[ -z "$TERM" ] || tput setaf 2
+echo "$(date) INFO: Homebrew is properly installed and up to date."
+[ -z "$TERM" ] || tput op
