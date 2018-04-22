@@ -38,15 +38,21 @@ if [ -z "$(which brew)" ]; then
 
   [ ! -z "$POSH_TMP" ] || POSH_TMP=~/tmp
   [ ! -z "$POSH_BIN" ] || POSH_BIN=~/Applications/bin
+  [ ! -z "$POSH_CASK" ] || POSH_CASK=~/Applications/cask
 
   mkdir -p "${POSH_BIN}/homebrew" 2>/dev/null
   mkdir -p "${POSH_TMP}/cache/homebrew" 2>/dev/null
   mkdir -p "${POSH_TMP}/tmp/homebrew" 2>/dev/null
   mkdir -p "${POSH_TMP}/log/homebrew" 2>/dev/null
+  mkdir -p "${POSH_CASK}/app" 2>/dev/null
+  mkdir -p "${POSH_CASK}/fonts" 2>/dev/null
+
   if  [ ! -d "${POSH_BIN}/homebrew" ] || \
       [ ! -d "${POSH_TMP}/cache/homebrew" ] || \
       [ ! -d "${POSH_TMP}/tmp/homebrew" ] || \
-      [ ! -d "${POSH_TMP}/log/homebrew" ]; then
+      [ ! -d "${POSH_TMP}/log/homebrew" ] || \
+      [ ! -d "${POSH_CASK}/app" ] || \
+      [ ! -d "${POSH_CASK}/fonts" ]; then
     [ -z "$TERM" ] || tput setaf 1
     echo "$(date) FATAL: Failed to create folders. Check your permissions."
     [ -z "$TERM" ] || tput op
@@ -83,6 +89,7 @@ if [ -z "$(which brew)" ]; then
   export HOMEBREW_TEMP=\${POSH_TMP}/tmp/homebrew
   export HOMEBREW_LOGS=\${POSH_TMP}/log/homebrew
   . \$(brew --prefix)/etc/bash_completion
+  export HOMEBREW_CASK_OPTS="--appdir=~/Applications/cask/app --fontdir=~/Applications/cask/fonts"
 EOF
 
   touch .profile
