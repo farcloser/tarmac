@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ ! "$(command -v shellcheck)" ]; then
+  if [ ! "$(command -v brew)" ]; then
+    ./init
+  fi
+  brew install shellcheck
+fi
+
+shellcheck -s sh -a -x init
+shellcheck -s sh -a -x test
+shellcheck -s sh -a -x ~/.profile
