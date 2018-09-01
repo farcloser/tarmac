@@ -41,49 +41,49 @@ done
 
 info "XCode command line tools is properly installed."
 
+if command -v brew 1>/dev/null; then
+  info "Homebrew is installed on this system."
+  exit
+fi
+
 # Have homebrew if not here
-if ! command -v brew 1>/dev/null; then
+warning "You are missing homebrew. Going to install."
 
-  warning "You are missing homebrew. Going to install."
+[ ! "$POSH_TOKEN" ] && printf "%s" " > Your github api token for homebrew: " && read -r POSH_TOKEN
+[ ! "$POSH_TMP" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/tmp]: " && read -r POSH_TMP
+[ ! "$POSH_BIN" ]   && printf "%s" " > Where to install homebrew [default to $HOME/Applications/bin]: " && read -r POSH_BIN
 
-  [ ! "$POSH_TOKEN" ] && printf "%s" " > Your github api token for homebrew: " && read -r POSH_TOKEN
-  [ ! "$POSH_TMP" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/tmp]: " && read -r POSH_TMP
-  [ ! "$POSH_BIN" ]   && printf "%s" " > Where to install homebrew [default to $HOME/Applications/bin]: " && read -r POSH_BIN
+POSH_TMP="${POSH_TMP:-$HOME/tmp}"
+POSH_BIN="${POSH_BIN:-$HOME/Applications/bin}"
+POSH_CASK="${POSH_CASK:-$HOME/Applications/cask}"
 
-  POSH_TMP="${POSH_TMP:-$HOME/tmp}"
-  POSH_BIN="${POSH_BIN:-$HOME/Applications/bin}"
-  POSH_CASK="${POSH_CASK:-$HOME/Applications/cask}"
+mkdir -p "${POSH_BIN}/homebrew" 2>/dev/null
+mkdir -p "${POSH_TMP}/cache/homebrew" 2>/dev/null
+mkdir -p "${POSH_TMP}/tmp/homebrew" 2>/dev/null
+mkdir -p "${POSH_TMP}/log/homebrew" 2>/dev/null
+mkdir -p "${POSH_CASK}/app" 2>/dev/null
+mkdir -p "${POSH_CASK}/fonts" 2>/dev/null
 
-  mkdir -p "${POSH_BIN}/homebrew" 2>/dev/null
-  mkdir -p "${POSH_TMP}/cache/homebrew" 2>/dev/null
-  mkdir -p "${POSH_TMP}/tmp/homebrew" 2>/dev/null
-  mkdir -p "${POSH_TMP}/log/homebrew" 2>/dev/null
-  mkdir -p "${POSH_CASK}/app" 2>/dev/null
-  mkdir -p "${POSH_CASK}/fonts" 2>/dev/null
+if  [ ! -d "${POSH_BIN}/homebrew" ] || \
+    [ ! -d "${POSH_TMP}/cache/homebrew" ] || \
+    [ ! -d "${POSH_TMP}/tmp/homebrew" ] || \
+    [ ! -d "${POSH_TMP}/log/homebrew" ] || \
+    [ ! -d "${POSH_CASK}/app" ] || \
+    [ ! -d "${POSH_CASK}/fonts" ]; then
+  error "Failed to create folders. Check your permissions."
+  exit 1
+fi
 
-  if  [ ! -d "${POSH_BIN}/homebrew" ] || \
-      [ ! -d "${POSH_TMP}/cache/homebrew" ] || \
-      [ ! -d "${POSH_TMP}/tmp/homebrew" ] || \
-      [ ! -d "${POSH_TMP}/log/homebrew" ] || \
-      [ ! -d "${POSH_CASK}/app" ] || \
-      [ ! -d "${POSH_CASK}/fonts" ]; then
-    error "Failed to create folders. Check your permissions."
-    exit 1
-  fi
+curl -s -S -L https://github.com/mxcl/homebrew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN}/homebrew"
 
-  curl -s -S -L https://github.com/mxcl/homebrew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN}/homebrew"
+if [ ! -f "${POSH_BIN}/homebrew/bin/brew" ]; then
+  error "Failed to retrieve homebrew from github. Network down?"
+  exit 1
+fi
 
-  if [ ! -f "${POSH_BIN}/homebrew/bin/brew" ]; then
-    error "Failed to retrieve homebrew from github. Network down?"
-    exit 1
-  fi
+rm -Rf "${POSH_BIN}/homebrew/share/doc/homebrew"
 
-  rm -Rf "${POSH_BIN}/homebrew/share/doc/homebrew"
-
-  "${POSH_BIN}/homebrew/bin/brew" update
-  "${POSH_BIN}/homebrew/bin/brew" install bash-completion
-
-  cat <<-EOF > "$HOME/.posh_brew"
+cat <<-EOF > "$HOME/.posh_brew"
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # ★ kingpin ＆ homebrew        ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
@@ -101,19 +101,22 @@ export HOMEBREW_CASK_OPTS="--appdir=\$HOME/Applications/cask/app --fontdir=\$HOM
 . "\$(brew --prefix)/etc/bash_completion"
 EOF
 
-  touch "$HOME/.profile"
-  if ! grep -q posh_brew "$HOME/.profile"; then
-    cat <<-EOF >> "$HOME/.profile"
+touch "$HOME/.profile"
+if ! grep -q posh_brew "$HOME/.profile"; then
+  cat <<-EOF >> "$HOME/.profile"
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # ★ tarmac                     ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # shellcheck source=$HOME/.posh_node
 . "\$HOME/.posh_brew"
 EOF
-  fi
-
-  # shellcheck source=/dev/null
-  . "$HOME/.profile"
 fi
 
-info "Homebrew is properly installed and up to date."
+# shellcheck source=/dev/null
+. "$HOME/.profile"
+
+"${POSH_BIN}/homebrew/bin/brew" update
+"${POSH_BIN}/homebrew/bin/brew" install bash-completion
+
+info "Brew successfully installed. You should now source ~/.profile."
+
