@@ -46,9 +46,9 @@ if ! command -v brew 1>/dev/null; then
 
   warning "You are missing homebrew. Going to install."
 
-  [ "$POSH_TOKEN" ] || printf "%s" " > Your github api token for homebrew: " && read -r POSH_TOKEN
-  [ "$POSH_TMP" ]   || printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/tmp]: " && read -r POSH_TMP
-  [ "$POSH_BIN" ]   || printf "%s" " > Where to install homebrew [default to $HOME/Applications/bin]: " && read -r POSH_BIN
+  [ ! "$POSH_TOKEN" ] && printf "%s" " > Your github api token for homebrew: " && read -r POSH_TOKEN
+  [ ! "$POSH_TMP" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/tmp]: " && read -r POSH_TMP
+  [ ! "$POSH_BIN" ]   && printf "%s" " > Where to install homebrew [default to $HOME/Applications/bin]: " && read -r POSH_BIN
 
   POSH_TMP="${POSH_TMP:-$HOME/tmp}"
   POSH_BIN="${POSH_BIN:-$HOME/Applications/bin}"
