@@ -83,32 +83,32 @@ if ! command -v brew 1>/dev/null; then
   "${POSH_BIN}/homebrew/bin/brew" update
   "${POSH_BIN}/homebrew/bin/brew" install bash-completion
 
-  cat <<- EOF > "$HOME/.posh_brew"
-  # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-  # ★ kingpin ＆ homebrew        ★
-  # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+  cat <<-EOF > "$HOME/.posh_brew"
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+# ★ kingpin ＆ homebrew        ★
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 
-  export POSH_TMP="${POSH_TMP}"
-  export POSH_BIN="${POSH_BIN}"
+export POSH_TMP="${POSH_TMP}"
+export POSH_BIN="${POSH_BIN}"
 
-  export PATH="\${POSH_BIN}/homebrew/bin:\${POSH_BIN}/homebrew/sbin:\${PATH}"
-  export HOMEBREW_GITHUB_API_TOKEN=${POSH_TOKEN}
-  export HOMEBREW_CACHE="\${POSH_TMP}/cache/homebrew"
-  export HOMEBREW_TEMP="\${POSH_TMP}/tmp/homebrew"
-  export HOMEBREW_LOGS="\${POSH_TMP}/log/homebrew"
-  export HOMEBREW_CASK_OPTS="--appdir=\$HOME/Applications/cask/app --fontdir=\$HOME/Applications/cask/fonts"
-  # shellcheck source=/dev/null
-  . "\$(brew --prefix)/etc/bash_completion"
+export PATH="\${POSH_BIN}/homebrew/bin:\${POSH_BIN}/homebrew/sbin:\${PATH}"
+export HOMEBREW_GITHUB_API_TOKEN=${POSH_TOKEN}
+export HOMEBREW_CACHE="\${POSH_TMP}/cache/homebrew"
+export HOMEBREW_TEMP="\${POSH_TMP}/tmp/homebrew"
+export HOMEBREW_LOGS="\${POSH_TMP}/log/homebrew"
+export HOMEBREW_CASK_OPTS="--appdir=\$HOME/Applications/cask/app --fontdir=\$HOME/Applications/cask/fonts"
+# shellcheck source=/dev/null
+. "\$(brew --prefix)/etc/bash_completion"
 EOF
 
   touch "$HOME/.profile"
   if ! grep -q posh_brew "$HOME/.profile"; then
-    cat <<- EOF >> "$HOME/.profile"
-    # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-    # ★ tarmac                     ★
-    # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-    # shellcheck source=$HOME/.posh_node
-    . "\$HOME/.posh_brew"
+    cat <<-EOF >> "$HOME/.profile"
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+# ★ tarmac                     ★
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+# shellcheck source=$HOME/.posh_node
+. "\$HOME/.posh_brew"
 EOF
   fi
 
