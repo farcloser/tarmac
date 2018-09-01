@@ -78,7 +78,7 @@ if ! command -v brew 1>/dev/null; then
     exit 1
   fi
 
-  # rm -Rf ${POSH_BIN}/homebrew/share/doc/homebrew
+  rm -Rf "${POSH_BIN}/homebrew/share/doc/homebrew"
 
   "${POSH_BIN}/homebrew/bin/brew" update
   "${POSH_BIN}/homebrew/bin/brew" install bash-completion
