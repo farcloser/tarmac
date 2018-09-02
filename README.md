@@ -22,6 +22,16 @@ You can alternatively set the following environment variables:
 
 Then call the script.
 
+## After that...
+
+Possibly, from another machine:
+`brew bundle dump --file=MigrateBrewfile`
+
+And:
+`brew bundle install --file=MigrateBrewfile`
+
+Or any other way to setup your environment.
+
 ## TODO
 
 Test
