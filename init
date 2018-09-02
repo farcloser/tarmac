@@ -74,7 +74,7 @@ if  [ ! -d "${POSH_BIN}/homebrew" ] || \
   exit 1
 fi
 
-curl -s -S -L https://github.com/mxcl/homebrew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN}/homebrew"
+curl -s -S -L  https://github.com/Homebrew/brew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN}/homebrew"
 
 if [ ! -f "${POSH_BIN}/homebrew/bin/brew" ]; then
   error "Failed to retrieve homebrew from github. Network down?"
