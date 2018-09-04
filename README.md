@@ -24,10 +24,12 @@ Then call the script.
 
 ## After that...
 
-Possibly, from another machine:
+Typically, migrating stuff from a template or another machine dump.
+
+Dump it:
 `brew bundle dump --file=MigrateBrewfile`
 
-And:
+Load it:
 `brew bundle install --file=MigrateBrewfile`
 
 Or any other way to setup your environment.

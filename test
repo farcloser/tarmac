@@ -9,4 +9,3 @@ fi
 
 shellcheck -s sh -a -x init
 shellcheck -s sh -a -x test
-shellcheck -s sh -a -x ~/.profile

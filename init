@@ -10,25 +10,25 @@
 [ -f "$HOME/.profile" ] && . "$HOME/.profile"
 
 stamp(){
-  >&2 echo "[$(date)]" "$@"
+  >&2 printf "[%s] %s\\n" "$(date)" "$*"
 }
 
 error(){
-  [ ! "$TERM" ] || ( [ -t 2 ] && >&2 tput setaf 1 )
+  [ "$TERM" ] && [ -t 2 ] && >&2 tput setaf 1
   stamp "[ERROR]" "$@"
-  [ ! "$TERM" ] || ( [ -t 2 ] && >&2 tput op )
+  [ "$TERM" ] && [ -t 2 ] && >&2 tput op
 }
 
 warning(){
-  [ ! "$TERM" ] || ( [ -t 2 ] && >&2 tput setaf 3 )
+  [ "$TERM" ] && [ -t 2 ] && >&2 tput setaf 3
   stamp "[WARNING]" "$@"
-  [ ! "$TERM" ] || ( [ -t 2 ] && >&2 tput op )
+  [ "$TERM" ] && [ -t 2 ] && >&2 tput op
 }
 
 info(){
-  [ ! "$TERM" ] || ( [ -t 2 ] && >&2 tput setaf 2 )
+  [ "$TERM" ] && [ -t 2 ] && >&2 tput setaf 2
   stamp "[INFO]" "$@"
-  [ ! "$TERM" ] || ( [ -t 2 ] && >&2 tput op )
+  [ "$TERM" ] && [ -t 2 ] && >&2 tput op
 }
 
 # Enforce XCode command line tools to be here
@@ -84,6 +84,7 @@ fi
 rm -Rf "${POSH_BIN}/homebrew/share/doc/homebrew"
 
 cat <<-EOF > "$HOME/.posh_brew"
+#!/usr/bin/env bash
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # ★ kingpin ＆ homebrew        ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
@@ -97,7 +98,7 @@ export HOMEBREW_CACHE="\${POSH_TMP}/cache/homebrew"
 export HOMEBREW_TEMP="\${POSH_TMP}/tmp/homebrew"
 export HOMEBREW_LOGS="\${POSH_TMP}/log/homebrew"
 export HOMEBREW_CASK_OPTS="--appdir=\$HOME/Applications/cask/app --fontdir=\$HOME/Applications/cask/fonts"
-# shellcheck source=/dev/null
+# shellcheck source=${POSH_BIN}/homebrew/etc/bash_completion
 . "\$(brew --prefix)/etc/bash_completion"
 EOF
 
@@ -107,7 +108,7 @@ if ! grep -q posh_brew "$HOME/.profile"; then
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # ★ tarmac                     ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-# shellcheck source=$HOME/.posh_node
+# shellcheck source=$HOME/.posh_brew
 . "\$HOME/.posh_brew"
 EOF
 fi
