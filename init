@@ -1,6 +1,6 @@
 #!/bin/sh
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-# P.O.SH - a very small POSIX compliant piece of shcript
+# P.O.SH - a very small piece of shcript to wrap brew installation
 # (c) 2018 Dubo Dubon Duponey <dubodubonduponey+github@pm.me>
 # Distributed under the terms of the MIT license
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
