@@ -32,8 +32,7 @@ info(){
 }
 
 # Enforce XCode command line tools to be here
-while ! command -v git 1>/dev/null; do
-  git 2>/dev/null 1>&2
+while ! git --help 1>/dev/null 2>&1; do
   warning "You need to install XCode command line tools. You should be prompted to do so now."
   info "Hit enter when XCode installation completes."
   read -r
@@ -45,6 +44,9 @@ if command -v brew 1>/dev/null; then
   info "Homebrew is installed on this system."
   exit
 fi
+
+info "Selecting with xcode-select now:"
+sudo xcode-select --switch /Library/Developer/CommandLineTools
 
 # Have homebrew if not here
 warning "You are missing homebrew. Going to install."
@@ -99,8 +101,13 @@ export HOMEBREW_TEMP="\${POSH_TMP}/tmp/homebrew"
 export HOMEBREW_LOGS="\${POSH_TMP}/log/homebrew"
 export HOMEBREW_CASK_OPTS="--appdir=\$HOME/Applications/cask/app --fontdir=\$HOME/Applications/cask/fonts"
 # shellcheck source=/dev/null
-. "\$(brew --prefix)/etc/bash_completion"
 EOF
+
+# shellcheck source=/dev/null
+. "$HOME/.posh_brew"
+
+"${POSH_BIN}/homebrew/bin/brew" update
+"${POSH_BIN}/homebrew/bin/brew" install bash-completion
 
 touch "$HOME/.profile"
 if ! grep -q posh_brew "$HOME/.profile"; then
@@ -111,13 +118,10 @@ if ! grep -q posh_brew "$HOME/.profile"; then
 # shellcheck source=$HOME/.posh_brew
 . "\$HOME/.posh_brew"
 EOF
+  printf "%s" ". \"\$(brew --prefix)/etc/bash_completion\"" >> "$HOME/.posh_brew"
 fi
 
 # shellcheck source=/dev/null
 . "$HOME/.profile"
 
-"${POSH_BIN}/homebrew/bin/brew" update
-"${POSH_BIN}/homebrew/bin/brew" install bash-completion
-
 info "Brew successfully installed. You should now source ~/.profile."
-
