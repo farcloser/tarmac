@@ -4,11 +4,20 @@ A very small wrapper to install & pre-configure Homebrew.
 
 ## TL;DR
 
+Just run:
+
 ```
+bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/1/init)"
+```
+
+... or get a specific version, or even master:
+
+```
+bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/v1.0.0/init)"
 bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/master/init)"
 ```
 
-Or get a local copy and `./init`.
+... or clone it the git way, then call `./init` inside the clone.
 
 You will be prompted for a github token, and optionally a "tmp" and "bin" path.
 
