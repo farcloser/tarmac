@@ -121,7 +121,4 @@ EOF
   printf "%s" ". \"\$(brew --prefix)/etc/bash_completion\"" >> "$HOME/.posh_brew"
 fi
 
-# shellcheck source=/dev/null
-. "$HOME/.profile"
-
 info "Brew successfully installed. You should now source ~/.profile."
