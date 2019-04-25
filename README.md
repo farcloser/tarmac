@@ -1,5 +1,8 @@
 # TarMac
 
+[![Build Status](https://travis-ci.org/dubo-dubon-duponey/tarmac.svg?branch=master)](https://travis-ci.org/dubo-dubon-duponey/tarmac)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdubo-dubon-duponey%2Ftarmac.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdubo-dubon-duponey%2Ftarmac?ref=badge_shield)
+
 A very small wrapper to install & pre-configure Homebrew.
 
 ## TL;DR
@@ -46,3 +49,7 @@ Or any other way to setup your environment.
 ## TODO
 
 Test
+
+## License
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdubo-dubon-duponey%2Ftarmac.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdubo-dubon-duponey%2Ftarmac?ref=badge_large)
