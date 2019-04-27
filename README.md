@@ -3,11 +3,14 @@
 [![Build Status](https://travis-ci.org/dubo-dubon-duponey/tarmac.svg?branch=master)](https://travis-ci.org/dubo-dubon-duponey/tarmac)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdubo-dubon-duponey%2Ftarmac.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdubo-dubon-duponey%2Ftarmac?ref=badge_shield)
 
-A very small wrapper to install & pre-configure Homebrew.
+TarMac is a very simple shell script with no dependency meant to install a per-user homebrew on a blank macOS.
+
+It does surface a couple of homebrew configuration nooks, will nag for git and xcode command-line tools, 
+and will initialize your .profile with what you need.
 
 ## TL;DR
 
-Just run:
+Run:
 
 ```
 bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/1/init)"
@@ -22,7 +25,7 @@ bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/master/in
 
 ... or clone it the git way, then call `./init` inside the clone.
 
-You will be prompted for a github token, and optionally a "tmp" and "bin" path.
+You will be prompted for a github token, and optionally a "tmp", "bin" and "cask" path.
 
 ## Non-interactive
 
