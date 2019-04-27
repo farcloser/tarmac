@@ -31,12 +31,13 @@ You can alternatively set the following environment variables:
  * `POSH_TOKEN`: github personal token to be used by brew
  * `POSH_TMP`: temporary directory to be used by brew, for eg `~/tmp`
  * `POSH_BIN`: final location of brew, for eg `~/Applications/bin`
+ * `POSH_CASK`: final location for casks, for eg `~/Applications/cask`
 
 Then call the script.
 
 ## After that...
 
-Typically, migrating stuff from a template or another machine dump.
+Typically, you may migrate / seed stuff from a template or another machine dump.
 
 Dump it:
 `brew bundle dump --file=MigrateBrewfile`
@@ -45,10 +46,6 @@ Load it:
 `brew bundle install --file=MigrateBrewfile`
 
 Or any other way to setup your environment.
-
-## TODO
-
-Test
 
 ## License
 
