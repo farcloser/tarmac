@@ -1,7 +1,7 @@
 language: bash
 
 script:
-  - ./test.sh
+  - ./test.sh "$HOME"
 
 addons:
   homebrew:
