@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -o errexit -o errtrace -o functrace -o nounset -o pipefail
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # Tarmac - a very small piece of shcript to wrap brew installation
 # (c) 2019 Dubo Dubon Duponey <dubodubonduponey+github@pm.me>
@@ -12,12 +13,12 @@
 ############################
 # generic Helpers
 ############################
-TARMAC_COLOR_RED=1
-TARMAC_COLOR_GREEN=2
-TARMAC_COLOR_YELLOW=3
+DP_COLOR_RED=1
+DP_COLOR_GREEN=2
+DP_COLOR_YELLOW=3
 
 # Prefix a date to a log line and output to stderr
-_tarmac_stamp(){
+_dp_stamp(){
   local color="$1"
   local level="$2"
   local i
@@ -30,39 +31,39 @@ _tarmac_stamp(){
   [ "$TERM" ] && [ -t 2 ] && >&2 tput op
 }
 
-tarmac_logger_info(){
-  _tarmac_stamp "$TARMAC_COLOR_GREEN" "INFO" "$@"
+dp_logger_info(){
+  _dp_stamp "$DP_COLOR_GREEN" "INFO" "$@"
 }
 
-tarmac_logger_warning(){
-  _tarmac_stamp "$TARMAC_COLOR_YELLOW" "WARNING" "$@"
+dp_logger_warning(){
+  _dp_stamp "$DP_COLOR_YELLOW" "WARNING" "$@"
 }
 
-tarmac_logger_error(){
-  _tarmac_stamp "$TARMAC_COLOR_RED" "ERROR" "$@"
+dp_logger_error(){
+  _dp_stamp "$DP_COLOR_RED" "ERROR" "$@"
 }
 
 # Enforce XCode command line tools to be here
 while ! git --help 1>/dev/null 2>&1; do
-  tarmac_logger_warning "You need to install XCode command line tools. You should be prompted to do so now."
-  tarmac_logger_info "Hit enter when XCode installation completes."
+  dp_logger_warning "You need to install XCode command line tools. You should be prompted to do so now."
+  dp_logger_info "Hit enter when XCode installation completes."
   read -r
 done
 
-tarmac_logger_info "XCode command line tools is properly installed."
+dp_logger_info "XCode command line tools is properly installed."
 
 if command -v brew 1>/dev/null; then
   if [ ! "$TARMAC_FORCE_INSTALL" ]; then
-    tarmac_logger_info "Homebrew is installed on this system."
+    dp_logger_info "Homebrew is installed on this system."
     exit
   fi
 fi
 
-tarmac_logger_info "Selecting with xcode-select now:"
+dp_logger_info "Selecting with xcode-select now:"
 sudo xcode-select --switch /Library/Developer/CommandLineTools
 
 # Have homebrew if not here
-tarmac_logger_warning "You are missing homebrew. Going to install."
+dp_logger_warning "You are missing homebrew. Going to install."
 
 [ ! "${POSH_TOKEN+x}" ] && printf "%s" " > Your github api token for homebrew: " && read -r POSH_TOKEN
 [ ! "${POSH_TMP+x}" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/tmp]: " && read -r POSH_TMP
@@ -86,14 +87,14 @@ if  [ ! -d "${POSH_BIN}/homebrew" ] || \
     [ ! -d "${POSH_TMP}/log/homebrew" ] || \
     [ ! -d "${POSH_CASK}/app" ] || \
     [ ! -d "${POSH_CASK}/fonts" ]; then
-  tarmac_logger_error "Failed to create folders. Check your permissions."
+  dp_logger_error "Failed to create folders. Check your permissions."
   exit 1
 fi
 
 curl -s -S -L  https://github.com/Homebrew/brew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN}/homebrew"
 
 if [ ! -f "${POSH_BIN}/homebrew/bin/brew" ]; then
-  tarmac_logger_error "Failed to retrieve homebrew from github. Network down?"
+  dp_logger_error "Failed to retrieve homebrew from github. Network down?"
   exit 1
 fi
 
@@ -114,7 +115,6 @@ export HOMEBREW_CACHE="\${POSH_TMP}/cache/homebrew"
 export HOMEBREW_TEMP="\${POSH_TMP}/tmp/homebrew"
 export HOMEBREW_LOGS="\${POSH_TMP}/log/homebrew"
 export HOMEBREW_CASK_OPTS="--appdir=\$HOME/Applications/cask/app --fontdir=\$HOME/Applications/cask/fonts"
-# shellcheck source=/dev/null
 EOF
 
 # shellcheck source=/dev/null
@@ -124,7 +124,7 @@ EOF
 "${POSH_BIN}/homebrew/bin/brew" install bash-completion
 
 touch "$HOME/.profile"
-if ! grep -q posh_brew "$HOME/.profile"; then
+if ! grep -q "posh_brew" "$HOME/.profile"; then
   cat <<-EOF >> "$HOME/.profile"
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # ★ tarmac                     ★
@@ -132,7 +132,14 @@ if ! grep -q posh_brew "$HOME/.profile"; then
 # shellcheck source=$HOME/.posh_brew
 . "\$HOME/.posh_brew"
 EOF
-  printf "%s" ". \"\$(brew --prefix)/etc/profile.d/bash_completion.sh\"" >> "$HOME/.posh_brew"
 fi
 
-tarmac_logger_info "Brew successfully installed. You should now source ~/.profile."
+cat <<-EOF >> "$HOME/.posh_brew"
+if [ ! "\$POSH_BREW_COMPLETION" ]; then
+  # shellcheck source=/dev/null
+  . "\$(brew --prefix)/etc/profile.d/bash_completion.sh"
+  export POSH_BREW_COMPLETION=true
+fi
+EOF
+
+dp_logger_info "Brew successfully installed. You should now source ~/.profile."
