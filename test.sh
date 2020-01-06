@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
+set -o errexit -o errtrace -o functrace -o nounset -o pipefail
 
-readonly expected="$1"
+# Linting
+. tooling/helpers.sh
+lint::shell init ./*.sh ./*/*.sh
+>&2 printf "Linting Successful"
 
-echo "Testing unattended forced install"
+# Installation test
+expected="$*"
+
+>&2 printf "Testing unattended forced install"
 
 POSH_CASK="" POSH_TMP="" POSH_BIN="" POSH_TOKEN="" TARMAC_FORCE_INSTALL=true ./init
 
@@ -10,13 +17,8 @@ POSH_CASK="" POSH_TMP="" POSH_BIN="" POSH_TOKEN="" TARMAC_FORCE_INSTALL=true ./i
 . ~/.profile
 
 if [ "$(command -v brew)" != "$expected/Applications/bin/homebrew/bin/brew" ]; then
-  echo "brew installation failed - output of command -v brew: $(command -v brew)"
+  >&2 printf "brew installation failed - expected: %s - command -v brew: %s" "$expected" "$(command -v brew)"
   exit 1
 fi
 
-echo "Homebrew installation Successful"
-
-shellcheck -a -x "./test.sh"
-shellcheck -a -x "./init"
-
-echo "Shellcheck successful"
+>&2 printf "Homebrew installation Successful"

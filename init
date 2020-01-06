@@ -109,7 +109,7 @@ export POSH_TMP="${POSH_TMP}"
 export POSH_BIN="${POSH_BIN}"
 
 export PATH="\${POSH_BIN}/homebrew/bin:\${POSH_BIN}/homebrew/sbin:\${PATH}"
-export HOMEBREW_GITHUB_API_TOKEN=${POSH_TOKEN}
+export HOMEBREW_GITHUB_API_TOKEN="\${HOMEBREW_GITHUB_API_TOKEN:-${POSH_TOKEN}}"
 export HOMEBREW_CACHE="\${POSH_TMP}/cache/homebrew"
 export HOMEBREW_TEMP="\${POSH_TMP}/tmp/homebrew"
 export HOMEBREW_LOGS="\${POSH_TMP}/log/homebrew"
@@ -132,7 +132,7 @@ if ! grep -q posh_brew "$HOME/.profile"; then
 # shellcheck source=$HOME/.posh_brew
 . "\$HOME/.posh_brew"
 EOF
-  printf "%s" ". \"\$(brew --prefix)/etc/bash_completion\"" >> "$HOME/.posh_brew"
+  printf "%s" ". \"\$(brew --prefix)/etc/profile.d/bash_completion.sh\"" >> "$HOME/.posh_brew"
 fi
 
 tarmac_logger_info "Brew successfully installed. You should now source ~/.profile."
