@@ -21,6 +21,7 @@ set -o errexit -o errtrace -o functrace -o nounset -o pipefail
 while ! git --help 1>/dev/null 2>&1; do
   logger::warning "You need to install XCode command line tools. You should be prompted to do so now."
   logger::info "Hit enter when XCode installation completes."
+  xcode-select --install
   read -r
 done
 
