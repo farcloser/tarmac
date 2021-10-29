@@ -14,7 +14,7 @@ logger::stamp(){
   shift
   [ "$TERM" ] && [ -t 2 ] && >&2 tput setaf "$color"
   for i in "$@"; do
-    >&2 printf "[%s] [%s] %s\\n" "$(date)" "$level" "$i"
+    >&2 printf "[%s] [%s] %s\n" "$(date)" "$level" "$i"
   done
   [ "$TERM" ] && [ -t 2 ] && >&2 tput op
 }
@@ -32,7 +32,6 @@ logger::error(){
 }
 
 lint::dockerfile(){
-  logger::info "Linting dockerfile:\n"
   >&2 printf " > %s\n" "$@"
   if ! hadolint "$@"; then
     logger::error "Failed linting Dockerfile\n"
@@ -41,10 +40,15 @@ lint::dockerfile(){
 }
 
 lint::shell(){
-  logger::info "Linting shellscript:\n"
-  >&2 printf " > %s\n" "$@"
-  if ! shellcheck -a -x "$@"; then
+  >&2 printf " > Shellchecking %s\n" "$@"
+  shellcheck -a -x "$@" || {
     logger::error "Failed shellchecking shell script\n"
-    exit 1
-  fi
+    return 1
+  }
+}
+
+curl::get(){
+  >&2 printf " > Downloading %s\n" "$@"
+  curl --proto '=https' --tlsv1.3 -sSfL --compressed "$1"
+  # curl -fsSLO --compressed "$1"
 }

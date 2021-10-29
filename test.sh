@@ -2,15 +2,17 @@
 set -o errexit -o errtrace -o functrace -o nounset -o pipefail
 
 # Linting
-. tooling/helpers.sh
+# shellcheck source=tooling/helpers.sh
+. "$(cd "$(dirname "${BASH_SOURCE[0]:-$PWD}")" 2>/dev/null 1>&2 && pwd)"/tooling/helpers.sh
 
+logger::info "Linting"
 lint::shell init ./*.sh ./*/*.sh
 logger::info "Linting successful"
 
+logger::info "Testing unattended forced install"
+
 # Installation test
 expected="$*"
-
-logger::info "Testing unattended forced install"
 
 POSH_CASK="" POSH_TMP="" POSH_BIN="" POSH_TOKEN="" TARMAC_FORCE_INSTALL=true ./init
 

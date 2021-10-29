@@ -6,64 +6,38 @@ set -o errexit -o errtrace -o functrace -o nounset -o pipefail
 # Distributed under the terms of the MIT license
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 
+# shellcheck source=tooling/helpers.sh
+. "$(cd "$(dirname "${BASH_SOURCE[0]:-$PWD}")" 2>/dev/null 1>&2 && pwd)"/tooling/helpers.sh
+
 # Source profile if here
 # shellcheck source=/dev/null
-[ -f "$HOME/.profile" ] && . "$HOME/.profile"
-
-############################
-# generic Helpers
-############################
-DP_COLOR_RED=1
-DP_COLOR_GREEN=2
-DP_COLOR_YELLOW=3
-
-# Prefix a date to a log line and output to stderr
-_dp_stamp(){
-  local color="$1"
-  local level="$2"
-  local i
-  shift
-  shift
-  [ "$TERM" ] && [ -t 2 ] && >&2 tput setaf "$color"
-  for i in "$@"; do
-    >&2 printf "[%s] [%s] %s\\n" "$(date)" "$level" "$i"
-  done
-  [ "$TERM" ] && [ -t 2 ] && >&2 tput op
-}
-
-dp_logger_info(){
-  _dp_stamp "$DP_COLOR_GREEN" "INFO" "$@"
-}
-
-dp_logger_warning(){
-  _dp_stamp "$DP_COLOR_YELLOW" "WARNING" "$@"
-}
-
-dp_logger_error(){
-  _dp_stamp "$DP_COLOR_RED" "ERROR" "$@"
+[ ! -f "$HOME/.profile" ] || {
+  set +eu
+  . "$HOME/.profile"
+  set -o errexit -o errtrace -o functrace -o nounset -o pipefail
 }
 
 # Enforce XCode command line tools to be here
 while ! git --help 1>/dev/null 2>&1; do
-  dp_logger_warning "You need to install XCode command line tools. You should be prompted to do so now."
-  dp_logger_info "Hit enter when XCode installation completes."
+  logger::warning "You need to install XCode command line tools. You should be prompted to do so now."
+  logger::info "Hit enter when XCode installation completes."
   read -r
 done
 
-dp_logger_info "XCode command line tools is properly installed."
+logger::info "XCode command line tools is properly installed."
 
 if command -v brew 1>/dev/null; then
   if [ ! "$TARMAC_FORCE_INSTALL" ]; then
-    dp_logger_info "Homebrew is installed on this system."
+    logger::info "Homebrew is installed on this system."
     exit
   fi
 fi
 
-dp_logger_info "Selecting with xcode-select now:"
+logger::info "Selecting with xcode-select now:"
 sudo xcode-select --switch /Library/Developer/CommandLineTools
 
 # Have homebrew if not here
-dp_logger_warning "You are missing homebrew. Going to install."
+logger::warning "You are missing homebrew. Going to install."
 
 [ ! "${POSH_TOKEN+x}" ] && printf "%s" " > Your github api token for homebrew: " && read -r POSH_TOKEN
 [ ! "${POSH_TMP+x}" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/tmp]: " && read -r POSH_TMP
@@ -87,14 +61,14 @@ if  [ ! -d "${POSH_BIN}/homebrew" ] || \
     [ ! -d "${POSH_TMP}/log/homebrew" ] || \
     [ ! -d "${POSH_CASK}/app" ] || \
     [ ! -d "${POSH_CASK}/fonts" ]; then
-  dp_logger_error "Failed to create folders. Check your permissions."
+  logger::error "Failed to create folders. Check your permissions."
   exit 1
 fi
 
-curl -s -S -L  https://github.com/Homebrew/brew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN}/homebrew"
+curl::get https://github.com/Homebrew/brew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN}/homebrew"
 
 if [ ! -f "${POSH_BIN}/homebrew/bin/brew" ]; then
-  dp_logger_error "Failed to retrieve homebrew from github. Network down?"
+  logger::error "Failed to retrieve homebrew from github. Not sure what went wrong."
   exit 1
 fi
 
@@ -135,11 +109,14 @@ EOF
 fi
 
 cat <<-EOF >> "$HOME/.posh_brew"
-if [ ! "\$POSH_BREW_COMPLETION" ]; then
+if [ ! "\${POSH_BREW_COMPLETION:-}" ]; then
+  # BASH_COMPLETION is unbound, and other problems in that script so, ignore
+  set +eu
   # shellcheck source=/dev/null
   . "\$(brew --prefix)/etc/profile.d/bash_completion.sh"
+  set -eu
   export POSH_BREW_COMPLETION=true
 fi
 EOF
 
-dp_logger_info "Brew successfully installed. You should now source ~/.profile."
+logger::info "Brew successfully installed. You should now source ~/.profile."
