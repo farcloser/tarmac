@@ -1,13 +1,14 @@
 language: bash
 
-script:
-  - ./test.sh "$HOME"
+matrix:
+  include:
+    - os: osx
 
 addons:
   homebrew:
     packages:
       - shellcheck
 
-matrix:
-  include:
-    - os: osx
+script:
+  - rm ~/.profile
+  - ./test.sh "$HOME"
