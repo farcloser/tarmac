@@ -12,25 +12,25 @@ and will initialize your .profile with what you need.
 Run:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/1/init)"
+bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/master/init)"
 
 # Alternatively, get a specific version, or even master:
 # bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/v1.0.0/init)"
-# bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/master/init)"
 ```
 
 ... or clone it the git way, then call `./init` inside the clone.
 
-You will be prompted for a github token, and optionally a `tmp`, `bin` and `cask` paths.
+You will be prompted for a GitHub token, and optionally a `bin`, `tmp`, `cache` and `log` path.
 
 ## Non-interactive
 
 You can alternatively set the following environment variables:
  
- * `POSH_TOKEN`: github personal token to be used by brew
- * `POSH_TMP`: temporary directory to be used by brew, for eg `~/tmp`
- * `POSH_BIN`: final location of brew, for eg `~/Applications/bin`
- * `POSH_CASK`: final location for casks, for eg `~/Applications/cask`
+* `HOMEBREW_GITHUB_API_TOKEN`: GitHub personal token to be used by brew
+* `POSH_BIN`: install location, for eg `~/Applications`
+* `POSH_TMP`: temporary directory to be used for temporary files, for eg `~/transient/tmp`
+* `POSH_CACHE`: temporary directory to be used for cache files, for eg `~/transient/cache`
+* `POSH_LOG`: temporary directory to be used for log files, for eg `~/transient/log`
 
 Then call the script.
 
@@ -44,4 +44,4 @@ Dump it:
 Load it:
 `brew bundle install --file=MigrateBrewfile`
 
-Or any other way to setup the rest of your laptop environment on top of brew.
+Or any other way to set up the rest of your laptop environment on top of brew.

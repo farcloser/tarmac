@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -o errexit -o errtrace -o functrace -o nounset -o pipefail
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-# Tarmac - a very small piece of shcript to wrap brew installation
+# Tarmac - a very small piece of shcript to scaffold macos machines
+# (c) 2023 Farcloser <apostasie@farcloser.world>
 # (c) 2019 Dubo Dubon Duponey <dubodubonduponey+github@pm.me>
 # Distributed under the terms of the MIT license
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
@@ -37,119 +38,104 @@ logger::error(){
 }
 
 curl::get(){
-  >&2 printf " > Downloading %s\n" "$@"
-  curl --proto '=https' --tlsv1.3 -sSfL --compressed "$1"
+  local url="$1"
+  logger::info "Downloading $url\n"
+  curl --proto '=https' --tlsv1.3 -sSfL --compressed "$url"
+}
+
+fs::ensuredir(){
+  local pth="$1"
+  mkdir -p "$pth" 2>/dev/null
+  [ -d "$pth" ] || {
+    logger::error "Failed to create $pth. Check your permissions."
+    return 1
+  }
+}
+
+install::commandlinetools(){
+  while ! git --help 1>/dev/null 2>&1; do
+    logger::warning "You need to install XCode command line tools. You should be prompted to do so now."
+    logger::info "Hit enter after the installation completes."
+    xcode-select --install
+    read -r
+  done
+  logger::info "Command line tools is installed. Now ensuring it is selected (need privileges for this):"
+  sudo xcode-select --switch /Library/Developer/CommandLineTools
 }
 
 # Source profile if here
 # shellcheck source=/dev/null
-[ ! -f "$HOME/.profile" ] || {
-  set +eu
-  . "$HOME/.profile"
-  set -o errexit -o errtrace -o functrace -o nounset -o pipefail
-}
+[ ! -f "$HOME/.profile" ] || . "$HOME/.profile"
 
-# Enforce XCode command line tools to be here
-while ! git --help 1>/dev/null 2>&1; do
-  logger::warning "You need to install XCode command line tools. You should be prompted to do so now."
-  logger::info "Hit enter when XCode installation completes."
-  xcode-select --install
-  read -r
-done
-
-logger::info "XCode command line tools is properly installed."
-
-if command -v brew 1>/dev/null; then
-  if [ ! "$TARMAC_FORCE_INSTALL" ]; then
+# If we have homebrew already, just stop
+! command -v brew 1>/dev/null || [ "${TARMAC_FORCE_INSTALL:-}" ] || {
     logger::info "Homebrew is installed on this system."
     exit
-  fi
-fi
+}
 
-logger::info "Selecting with xcode-select now:"
-sudo xcode-select --switch /Library/Developer/CommandLineTools
+install::commandlinetools
 
-# Have homebrew if not here
 logger::warning "You are missing homebrew. Going to install."
 
-[ ! "${POSH_TOKEN+x}" ] && printf "%s" " > Your github api token for homebrew: " && read -r POSH_TOKEN
-[ ! "${POSH_TMP+x}" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/tmp]: " && read -r POSH_TMP
-[ ! "${POSH_BIN+x}" ]   && printf "%s" " > Where to install homebrew [default to $HOME/Applications/bin]: " && read -r POSH_BIN
-[ ! "${POSH_CASK+x}" ]  && printf "%s" " > Where to install casks [default to $HOME/Applications/cask]: " && read -r POSH_CASK
+[ ! "${HOMEBREW_GITHUB_API_TOKEN+x}" ] && printf "%s" " > Your github api token for homebrew: " && read -r HOMEBREW_GITHUB_API_TOKEN
+[ ! "${POSH_BIN+x}" ]   && printf "%s" " > Where to install homebrew [default to $HOME/Applications]: " && read -r POSH_BIN
+[ ! "${POSH_TMP+x}" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/transient/tmp]: " && read -r POSH_TMP
+[ ! "${POSH_CACHE+x}" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/transient/cache]: " && read -r POSH_CACHE
+[ ! "${POSH_LOG+x}" ]   && printf "%s" " > Where to hold temporary files for homebrew [default to $HOME/transient/log]: " && read -r POSH_LOG
 
-POSH_TMP="${POSH_TMP:-$HOME/tmp}"
-POSH_BIN="${POSH_BIN:-$HOME/Applications/bin}"
-POSH_CASK="${POSH_CASK:-$HOME/Applications/cask}"
+fs::ensuredir "${POSH_BIN:-$HOME/Applications}/homebrew"
+fs::ensuredir "${POSH_BIN:-$HOME/Applications}/app"
+fs::ensuredir "${POSH_BIN:-$HOME/Applications}/fonts"
+fs::ensuredir "${POSH_TMP:-$HOME/transient/tmp}/homebrew"
+fs::ensuredir "${POSH_CACHE:-$HOME/transient/cache}/homebrew"
+fs::ensuredir "${POSH_LOG:-$HOME/transient/log}/homebrew"
 
-mkdir -p "${POSH_BIN}/homebrew" 2>/dev/null
-mkdir -p "${POSH_TMP}/cache/homebrew" 2>/dev/null
-mkdir -p "${POSH_TMP}/tmp/homebrew" 2>/dev/null
-mkdir -p "${POSH_TMP}/log/homebrew" 2>/dev/null
-mkdir -p "${POSH_CASK}/app" 2>/dev/null
-mkdir -p "${POSH_CASK}/fonts" 2>/dev/null
+curl::get https://github.com/Homebrew/brew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN:-$HOME/Applications}/homebrew"
 
-if  [ ! -d "${POSH_BIN}/homebrew" ] || \
-    [ ! -d "${POSH_TMP}/cache/homebrew" ] || \
-    [ ! -d "${POSH_TMP}/tmp/homebrew" ] || \
-    [ ! -d "${POSH_TMP}/log/homebrew" ] || \
-    [ ! -d "${POSH_CASK}/app" ] || \
-    [ ! -d "${POSH_CASK}/fonts" ]; then
-  logger::error "Failed to create folders. Check your permissions."
-  exit 1
-fi
-
-curl::get https://github.com/Homebrew/brew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN}/homebrew"
-
-if [ ! -f "${POSH_BIN}/homebrew/bin/brew" ]; then
+if [ ! -f "${POSH_BIN:-$HOME/Applications}/homebrew/bin/brew" ]; then
   logger::error "Failed to retrieve homebrew from github. Not sure what went wrong."
   exit 1
 fi
 
-rm -Rf "${POSH_BIN}/homebrew/share/doc/homebrew"
+rm -Rf "${POSH_BIN:-$HOME/Applications}/homebrew/share/doc/homebrew"
 
 cat <<-EOF > "$HOME/.posh_brew"
 #!/usr/bin/env bash
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-# ★ kingpin ＆ homebrew        ★
+# ★ Kingpin                    ★
+# ★ (c) 2023, Apostasie        ★
+# ★ MIT License                ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 
-export POSH_TMP="${POSH_TMP}"
-export POSH_BIN="${POSH_BIN}"
+export PATH="\${POSH_BIN:-\$HOME/Applications}/homebrew/bin:\${POSH_BIN:-\$HOME/Applications}/homebrew/sbin:\${PATH}"
 
-export PATH="\${POSH_BIN}/homebrew/bin:\${POSH_BIN}/homebrew/sbin:\${PATH}"
-export HOMEBREW_GITHUB_API_TOKEN="\${HOMEBREW_GITHUB_API_TOKEN:-${POSH_TOKEN}}"
-export HOMEBREW_CACHE="\${POSH_TMP}/cache/homebrew"
-export HOMEBREW_TEMP="\${POSH_TMP}/tmp/homebrew"
-export HOMEBREW_LOGS="\${POSH_TMP}/log/homebrew"
-export HOMEBREW_CASK_OPTS="--appdir=\$HOME/Applications/cask/app --fontdir=\$HOME/Applications/cask/fonts"
+export HOMEBREW_EDITOR="\${POSH_EDITOR:-nano}"
+export HOMEBREW_CACHE="\${POSH_CACHE:-\$HOME/transient/cache}/homebrew"
+export HOMEBREW_TEMP="\${POSH_TMP:-\$HOME/transient/tmp}/homebrew"
+export HOMEBREW_LOGS="\${POSH_LOG:-\$HOME/transient/log}/homebrew"
+export HOMEBREW_CASK_OPTS="--appdir=\${POSH_BIN:-\$HOME/Applications}/app --fontdir=\${POSH_BIN:-\$HOME/Applications}/fonts"
+
+# UPSTREAM: uses unset variables, and seems to be returning non zero, so, ignore these here
+set +o errexit +o nounset
+# shellcheck source=/dev/null
+[[ "\${POSH_SHELL:-}" != bash ]] || source "\$(brew --prefix 2>/dev/null || true)/etc/bash_completion"
+set -o errexit -o nounset
 EOF
 
 # shellcheck source=/dev/null
 . "$HOME/.posh_brew"
 
-"${POSH_BIN}/homebrew/bin/brew" update
-"${POSH_BIN}/homebrew/bin/brew" install bash-completion
+brew update
+brew install bash-completion zsh-completions
 
 touch "$HOME/.profile"
-if ! grep -q "posh_brew" "$HOME/.profile"; then
-  cat <<-EOF >> "$HOME/.profile"
-# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-# ★ tarmac                     ★
-# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-# shellcheck source=$HOME/.posh_brew
-. "\$HOME/.posh_brew"
-EOF
-fi
+grep -q "POSH_EDITOR" "$HOME/.profile" || printf "export POSH_EDITOR=\"%s\"\n" "nano" >> "$HOME/.profile"
+grep -q "POSH_BIN" "$HOME/.profile" || printf "export POSH_BIN=\"%s\"\n" "${POSH_BIN:-\$HOME/Applications}" >> "$HOME/.profile"
+grep -q "POSH_TMP" "$HOME/.profile" || printf "export POSH_TMP=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/tmp}" >> "$HOME/.profile"
+grep -q "POSH_CACHE" "$HOME/.profile" || printf "export POSH_CACHE=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/cache}" >> "$HOME/.profile"
+grep -q "POSH_LOG" "$HOME/.profile" || printf "export POSH_LOG=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/log}" >> "$HOME/.profile"
+grep -q "source \"\$HOME\"/.posh*" "$HOME/.profile" || printf "source \"\$HOME\"/.posh*\n" >> "$HOME/.profile"
 
-cat <<-EOF >> "$HOME/.posh_brew"
-if [ ! "\${POSH_BREW_COMPLETION:-}" ]; then
-  # BASH_COMPLETION is unbound, and other problems in that script so, ignore
-  set +eu
-  # shellcheck source=/dev/null
-  . "\$(brew --prefix)/etc/profile.d/bash_completion.sh"
-  set -eu
-  export POSH_BREW_COMPLETION=true
-fi
-EOF
+grep -q "HOMEBREW_GITHUB_API_TOKEN" "$HOME/.posh_secrets" || printf "export HOMEBREW_GITHUB_API_TOKEN=\"%s\"\n" "$HOMEBREW_GITHUB_API_TOKEN" >> "$HOME/.posh_secrets"
 
-logger::info "Brew successfully installed. You should now source ~/.profile."
+logger::info "Brew successfully installed. You should now source ~/.profile - and install any required formula"
