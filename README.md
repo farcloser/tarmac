@@ -1,7 +1,5 @@
 # TarMac
 
-[![Build Status](https://travis-ci.org/dubo-dubon-duponey/tarmac.svg?branch=master)](https://travis-ci.org/dubo-dubon-duponey/tarmac)
-
 TarMac is a very simple shell script with no dependency meant to install a per-user homebrew on a blank macOS.
 
 It does surface a couple of homebrew configuration nooks, will nag for git and xcode command-line tools, 
@@ -12,10 +10,10 @@ and will initialize your .profile with what you need.
 Run:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/master/init)"
+bash -c "$(curl -fsSL https://raw.github.com/farcloser/tarmac/master/init)"
 
-# Alternatively, get a specific version, or even master:
-# bash -c "$(curl -fsSL https://raw.github.com/dubo-dubon-duponey/tarmac/v1.0.0/init)"
+# Alternatively, get a specific version:
+# bash -c "$(curl -fsSL https://raw.github.com/farcloser/tarmac/v1.0.0/init)"
 ```
 
 ... or clone it the git way, then call `./init` inside the clone.

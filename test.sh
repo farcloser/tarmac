@@ -57,7 +57,12 @@ logger::info "Testing unattended forced install"
 # Installation test
 expected="$*"
 
-POSH_CASK="" POSH_TMP="" POSH_BIN="" POSH_TOKEN="" TARMAC_FORCE_INSTALL=true ./init
+POSH_BIN="" \
+POSH_TMP="$GITHUB_WORKSPACE/cache/tmp" \
+POSH_CACHE="$GITHUB_WORKSPACE/cache/cache" \
+POSH_LOG="$GITHUB_WORKSPACE/cache/log" \
+POSH_TOKEN="" \
+  TARMAC_FORCE_INSTALL=true ./init
 
 # shellcheck source=/dev/null
 . "$HOME"/.posh_brew

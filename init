@@ -40,7 +40,7 @@ logger::error(){
 curl::get(){
   local url="$1"
   logger::info "Downloading $url\n"
-  curl --proto '=https' --tlsv1.3 -sSfL --compressed "$url"
+  curl --proto '=https' --tlsv1.2 -sSfL --compressed "$url"
 }
 
 fs::ensuredir(){
@@ -59,8 +59,8 @@ install::commandlinetools(){
     xcode-select --install
     read -r
   done
-  logger::info "Command line tools is installed. Now ensuring it is selected (need privileges for this):"
-  sudo xcode-select --switch /Library/Developer/CommandLineTools
+  #logger::info "Command line tools is installed. Now ensuring it is selected (need privileges for this):"
+  #sudo xcode-select --switch /Library/Developer/CommandLineTools
 }
 
 # Source profile if here
@@ -102,20 +102,23 @@ rm -Rf "${POSH_BIN:-$HOME/Applications}/homebrew/share/doc/homebrew"
 cat <<-EOF > "$HOME/.posh_brew"
 #!/usr/bin/env bash
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-# ★ Kingpin                    ★
-# ★ (c) 2023, Apostasie        ★
-# ★ MIT License                ★
+# ★ Kingpin             ★
+# ★ (c) 2023, Farcloser ★
+# ★ MIT License         ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 
+# Put homebrew in the path
 export PATH="\${POSH_BIN:-\$HOME/Applications}/homebrew/bin:\${POSH_BIN:-\$HOME/Applications}/homebrew/sbin:\${PATH}"
 
+# Define environment
 export HOMEBREW_EDITOR="\${POSH_EDITOR:-nano}"
 export HOMEBREW_CACHE="\${POSH_CACHE:-\$HOME/transient/cache}/homebrew"
 export HOMEBREW_TEMP="\${POSH_TMP:-\$HOME/transient/tmp}/homebrew"
 export HOMEBREW_LOGS="\${POSH_LOG:-\$HOME/transient/log}/homebrew"
 export HOMEBREW_CASK_OPTS="--appdir=\${POSH_BIN:-\$HOME/Applications}/app --fontdir=\${POSH_BIN:-\$HOME/Applications}/fonts"
 
-# UPSTREAM: uses unset variables, and seems to be returning non zero, so, ignore these here
+# Get bash completion if we are on bash, but...
+# be careful, as it uses unset variables, and seems to be returning non zero
 set +o errexit +o nounset
 # shellcheck source=/dev/null
 [[ "\${POSH_SHELL:-}" != bash ]] || source "\$(brew --prefix 2>/dev/null || true)/etc/bash_completion"
