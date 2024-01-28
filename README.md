@@ -43,3 +43,7 @@ Load it:
 `brew bundle install --file=MigrateBrewfile`
 
 Or any other way to set up the rest of your laptop environment on top of brew.
+
+## Development
+
+You need shellcheck (`brew install shellcheck`).
