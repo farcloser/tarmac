@@ -97,8 +97,6 @@ if [ ! -f "${POSH_BIN:-$HOME/Applications}/homebrew/bin/brew" ]; then
   exit 1
 fi
 
-rm -Rf "${POSH_BIN:-$HOME/Applications}/homebrew/share/doc/homebrew"
-
 cat <<-EOF > "$HOME/.posh_brew"
 #!/usr/bin/env bash
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★

@@ -2,8 +2,8 @@
 
 TarMac is a very simple shell script with no dependency meant to install a per-user homebrew on a blank macOS.
 
-It does surface a couple of homebrew configuration nooks, will nag for git and xcode command-line tools, 
-and will initialize your .profile with what you need.
+It does surface a couple of homebrew configuration nooks, will nag for git and xcode command-line tools,
+and will seed `.profile`.
 
 ## TL;DR
 
@@ -23,7 +23,7 @@ You will be prompted for a GitHub token, and optionally a `bin`, `tmp`, `cache` 
 ## Non-interactive
 
 You can alternatively set the following environment variables:
- 
+
 * `HOMEBREW_GITHUB_API_TOKEN`: GitHub personal token to be used by brew
 * `POSH_BIN`: install location, for eg `~/Applications`
 * `POSH_TMP`: temporary directory to be used for temporary files, for eg `~/transient/tmp`
