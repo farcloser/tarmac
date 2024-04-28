@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -o errexit -o errtrace -o functrace -o nounset -o pipefail
+set -o errexit -o errtrace -o functrace -o nounset -o pipefail -o monitor
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # Tarmac - a very small piece of shcript to scaffold macos machines
-# (c) 2023 Farcloser <apostasie@farcloser.world>
+# (c) 2024 Farcloser <apostasie@farcloser.world>
 # (c) 2019 Dubo Dubon Duponey <dubodubonduponey+github@pm.me>
 # Distributed under the terms of the MIT license
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
@@ -38,12 +38,6 @@ logger::error(){
   logger::stamp "$COLOR_RED" "ERROR" "$@"
 }
 
-curl::get(){
-  local url="$1"
-  logger::info "Downloading $url\n"
-  curl --proto '=https' --tlsv1.2 -sSfL --compressed "$url"
-}
-
 fs::ensuredir(){
   local pth="$1"
   mkdir -p "$pth" 2>/dev/null
@@ -51,6 +45,12 @@ fs::ensuredir(){
     logger::error "Failed to create $pth. Check your permissions."
     return 1
   }
+}
+
+curl::get(){
+  local url="$1"
+  logger::info "Downloading $url\n"
+  curl --proto '=https' --tlsv1.3 -sSfL --compressed "$url"
 }
 
 install::commandlinetools(){
@@ -100,9 +100,10 @@ fi
 
 cat <<-EOF > "$HOME/.posh_brew"
 #!/usr/bin/env bash
+set -o errexit -o errtrace -o functrace -o nounset -o pipefail -o monitor
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 # ★ Kingpin             ★
-# ★ (c) 2023, Farcloser ★
+# ★ (c) 2024 Farcloser ★
 # ★ MIT License         ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 
@@ -120,7 +121,7 @@ export HOMEBREW_CASK_OPTS="--appdir=\${POSH_BIN:-\$HOME/Applications}/app --font
 # be careful, as it uses unset variables, and seems to be returning non zero
 set +o errexit +o nounset
 # shellcheck source=/dev/null
-[[ "\${POSH_SHELL:-}" != bash ]] || source "\$(brew --prefix 2>/dev/null || true)/etc/bash_completion"
+[[ "\${POSH_SHELL:-}" != bash ]] || . "\$(brew --prefix 2>/dev/null || true)/etc/bash_completion" || true
 set -o errexit -o nounset
 EOF
 
@@ -138,6 +139,17 @@ grep -q "POSH_CACHE" "$HOME/.profile" || printf "export POSH_CACHE=\"%s\"\n" "${
 grep -q "POSH_LOG" "$HOME/.profile" || printf "export POSH_LOG=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/log}" >> "$HOME/.profile"
 grep -q "source \"\$HOME\"/.posh*" "$HOME/.profile" || printf "source \"\$HOME\"/.posh*\n" >> "$HOME/.profile"
 
+[ -e "$HOME/.posh_secrets" ] || {
+  cat <<-EOF > "$HOME/.posh_secrets"
+#!/usr/bin/env bash
+set -o errexit -o errtrace -o functrace -o nounset -o pipefail -o monitor
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+# ★ Kingpin             ★
+# ★ (c) 2024 Farcloser ★
+# ★ MIT License         ★
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+EOF
+}
 grep -q "HOMEBREW_GITHUB_API_TOKEN" "$HOME/.posh_secrets" || printf "export HOMEBREW_GITHUB_API_TOKEN=\"%s\"\n" "$HOMEBREW_GITHUB_API_TOKEN" >> "$HOME/.posh_secrets"
 
 logger::info "Brew successfully installed. You should now source ~/.profile - and install any required formula"
