@@ -47,3 +47,5 @@ Or any other way to set up the rest of your laptop environment on top of brew.
 ## Development
 
 You need shellcheck (`brew install shellcheck`).
+
+Note that `-o errtrace -o functrace` are not recognized by zsh.

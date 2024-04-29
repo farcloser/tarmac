@@ -9,9 +9,9 @@ jobs:
 #      - macos-12
 #      - macos-13
 #      - macos-13-arm64
-#      - macos-14
-#      - macos-14-arm64
-      - macos-latest
+      - macos-14
+      - macos-14-arm64
+#      - macos-latest
 
     steps:
       - name: Checks-out repository
@@ -27,4 +27,5 @@ jobs:
 
       - name: test
         run: |
+          brew install shellcheck
           ./test.sh "$HOME"
