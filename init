@@ -141,7 +141,7 @@ grep -q "POSH_BIN" "$HOME/.profile" || printf "export POSH_BIN=\"%s\"\n" "${POSH
 grep -q "POSH_TMP" "$HOME/.profile" || printf "export POSH_TMP=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/tmp}" >> "$HOME/.profile"
 grep -q "POSH_CACHE" "$HOME/.profile" || printf "export POSH_CACHE=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/cache}" >> "$HOME/.profile"
 grep -q "POSH_LOG" "$HOME/.profile" || printf "export POSH_LOG=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/log}" >> "$HOME/.profile"
-grep -q 'while read -r line; do . "$line"; done < <(ls "$HOME"/.posh_*)' || printf 'while read -r line; do . "$line"; done < <(ls "$HOME"/.posh_*)' >> "$HOME/.profile"
+grep -q 'while read -r line; do . "$line"; done < <(ls "$HOME"/.posh_*)' "$HOME/.profile" || printf 'while read -r line; do . "$line"; done < <(ls "$HOME"/.posh_*)' >> "$HOME/.profile"
 
 [ -e "$HOME/.posh_secrets" ] || {
   cat <<-EOF > "$HOME/.posh_secrets"
