@@ -56,10 +56,8 @@ logger::info "Linting successful"
 logger::info "Testing unattended forced install"
 
 # Installation test
-expected="$*"
-
 HOMEBREW_GITHUB_API_TOKEN="" \
-POSH_BIN="" \
+POSH_BIN="$HOME/Applications" \
 POSH_TMP="${GITHUB_WORKSPACE:-}/cache/tmp" \
 POSH_CACHE="${GITHUB_WORKSPACE:-}/cache/cache" \
 POSH_LOG="${GITHUB_WORKSPACE:-}/cache/log" \
@@ -68,8 +66,8 @@ POSH_LOG="${GITHUB_WORKSPACE:-}/cache/log" \
 # shellcheck source=/dev/null
 . "$HOME"/.posh_brew
 
-if [ "$(command -v brew)" != "$expected/Applications/homebrew/bin/brew" ]; then
-  logger::error "brew installation failed - expected: $expected - command -v brew: $(command -v brew)"
+if [ "$(command -v brew)" != "$POSH_BIN/homebrew/bin/brew" ]; then
+  logger::error "brew installation failed - expected: $POSH_BIN/homebrew/bin/brew - command -v brew: $(command -v brew)"
   exit 1
 fi
 

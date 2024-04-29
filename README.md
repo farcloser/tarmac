@@ -53,4 +53,5 @@ will trip brew bash completion.
 
 Finally, tarmac will not enable bash completion unless `POSH_SHELL` is set (to `bash`).
 This is typically achieved with `ps -p $$ -ocomm=` (but mind the leading dash
-in some cases).
+in some cases). Out of scope for here.
+
