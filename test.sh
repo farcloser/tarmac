@@ -58,11 +58,11 @@ logger::info "Testing unattended forced install"
 # Installation test
 expected="$*"
 
+HOMEBREW_GITHUB_API_TOKEN="" \
 POSH_BIN="" \
 POSH_TMP="${GITHUB_WORKSPACE:-}/cache/tmp" \
 POSH_CACHE="${GITHUB_WORKSPACE:-}/cache/cache" \
 POSH_LOG="${GITHUB_WORKSPACE:-}/cache/log" \
-POSH_TOKEN="" \
   TARMAC_FORCE_INSTALL=true ./init
 
 # shellcheck source=/dev/null
