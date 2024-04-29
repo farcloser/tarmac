@@ -173,5 +173,3 @@ EOF
 }
 
 logger::info "Brew successfully installed. You should now source ~/.profile - and install any required formula"
-
-}

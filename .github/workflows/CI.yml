@@ -6,11 +6,11 @@ jobs:
   test:
     # https://github.com/actions/runner-images
     runs-on:
-#      - macos-12
-#      - macos-13
+      - macos-12
+      - macos-13
 #      - macos-13-arm64
       - macos-14
-      - macos-14-arm64
+#      - macos-14-arm64
 #      - macos-latest
 
     steps:
