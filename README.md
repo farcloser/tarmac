@@ -48,4 +48,9 @@ Or any other way to set up the rest of your laptop environment on top of brew.
 
 You need shellcheck (`brew install shellcheck`).
 
-Note that `-o errtrace -o functrace` are not recognized by zsh.
+Note that `-o errtrace -o functrace` are not recognized by zsh, and that `-o nounset`
+will trip brew bash completion.
+
+Finally, tarmac will not enable bash completion unless `POSH_SHELL` is set (to `bash`).
+This is typically achieved with `ps -p $$ -ocomm=` (but mind the leading dash
+in some cases).

@@ -157,4 +157,21 @@ EOF
 }
 grep -q "HOMEBREW_GITHUB_API_TOKEN" "$HOME/.posh_secrets" || printf "export HOMEBREW_GITHUB_API_TOKEN=\"%s\"\n" "$HOMEBREW_GITHUB_API_TOKEN" >> "$HOME/.posh_secrets"
 
+[ -e "$HOME/.posh_x" ] || {
+  cat <<-EOF > "$HOME/.posh_x"
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail -o monitor
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+# ★ Kingpin             ★
+# ★ (c) 2024 Farcloser ★
+# ★ MIT License         ★
+# ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
+
+# Brew completion has unset variables
+set +o nounset
+EOF
+}
+
 logger::info "Brew successfully installed. You should now source ~/.profile - and install any required formula"
+
+}
