@@ -167,8 +167,8 @@ set -o errexit -o nounset -o pipefail -o monitor
 # ★ MIT License         ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 
-# Brew completion has unset variables
-set +o nounset
+# Brew completion has unset variables - generally, scripts cannot be trusted with these...
+set +o nounset +o errexit
 EOF
 }
 
