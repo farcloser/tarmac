@@ -66,8 +66,8 @@ POSH_LOG="${GITHUB_WORKSPACE:-}/cache/log" \
 # shellcheck source=/dev/null
 . "$HOME"/.posh_brew
 
-if [ "$(command -v brew)" != "$POSH_BIN/homebrew/bin/brew" ]; then
-  logger::error "brew installation failed - expected: $POSH_BIN/homebrew/bin/brew - command -v brew: $(command -v brew)"
+if [ "$(command -v brew)" != "$HOME/Applications/homebrew/bin/brew" ]; then
+  logger::error "brew installation failed - expected: $HOME/Applications/homebrew/bin/brew - command -v brew: $(command -v brew)"
   exit 1
 fi
 
