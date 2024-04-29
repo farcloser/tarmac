@@ -5,11 +5,16 @@ on: [push, pull_request]
 jobs:
   test:
     # https://github.com/actions/runner-images
-    runs-on:
+    strategy:
+      matrix:
+        os: [macos-12, macos-13, macos-14]
+    runs-on: matrix.os
+
+# , macos-13, macos-13-xlarge, macos-14-large
 #      - macos-12
 #      - macos-13
 #      - macos-13-arm64
-      - macos-14
+#      - macos-14
 #      - macos-14-arm64
 #      - macos-latest
 
@@ -29,3 +34,4 @@ jobs:
         run: |
           brew install shellcheck
           ./test.sh "$HOME"
+          uname -a
