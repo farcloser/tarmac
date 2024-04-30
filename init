@@ -111,22 +111,29 @@ set -o errexit -o nounset -o pipefail -o monitor
 # Put homebrew in the path
 export PATH="\${POSH_BIN:-\$HOME/Applications}/homebrew/bin:\${POSH_BIN:-\$HOME/Applications}/homebrew/sbin:\${PATH}"
 
-# Define environment
-export HOMEBREW_EDITOR="\${POSH_EDITOR:-nano}"
-export HOMEBREW_CACHE="\${POSH_CACHE:-\$HOME/transient/cache}/homebrew"
-export HOMEBREW_TEMP="\${POSH_TMP:-\$HOME/transient/tmp}/homebrew"
-export HOMEBREW_LOGS="\${POSH_LOG:-\$HOME/transient/log}/homebrew"
-export HOMEBREW_CASK_OPTS="--appdir=\${POSH_BIN:-\$HOME/Applications}/app --fontdir=\${POSH_BIN:-\$HOME/Applications}/fonts"
+if type brew &>/dev/null; then
+  set +o errexit +o nounset
 
-# Get bash completion if we are on bash, but...
-# be careful, as it uses unset variables, and seems to be returning non zero
-set +o errexit +o nounset
-# shellcheck source=/dev/null
-[[ "\${POSH_SHELL:-}" != bash ]] || {
-  bash_completion="\$(brew --prefix 2>/dev/null || true)"/etc/profile.d/bash_completion.sh
-  [[ ! -r "\$bash_completion" ]] || . "\$bash_completion"
-}
-set -o errexit -o nounset
+  # Define environment
+  export HOMEBREW_EDITOR="\${POSH_EDITOR:-nano}"
+  export HOMEBREW_CACHE="\${POSH_CACHE:-\$HOME/transient/cache}/homebrew"
+  export HOMEBREW_TEMP="\${POSH_TMP:-\$HOME/transient/tmp}/homebrew"
+  export HOMEBREW_LOGS="\${POSH_LOG:-\$HOME/transient/log}/homebrew"
+  export HOMEBREW_CASK_OPTS="--appdir=\${POSH_BIN:-\$HOME/Applications}/app --fontdir=\${POSH_BIN:-\$HOME/Applications}/fonts"
+
+  [[ "\${POSH_SHELL:-}" != bash ]] || {
+    bash_completion="\$(brew --prefix)"/etc/profile.d/bash_completion.sh
+    # shellcheck source=/dev/null
+    [[ ! -r "\$bash_completion" ]] || . "\$bash_completion"
+  }
+  [[ "\${POSH_SHELL:-}" != zsh ]] || {
+    export FPATH="\$(brew --prefix)/share/zsh-completions:\$FPATH"
+    autoload -Uz compinit
+    compinit
+  }
+
+  set -o errexit -o nounset
+fi
 EOF
 
 # shellcheck source=/dev/null
