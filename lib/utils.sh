@@ -40,14 +40,14 @@ fs::ensuredir(){
   local pth="$1"
   mkdir -p "$pth" 2>/dev/null
   [ -d "$pth" ] || {
-    logger::error "Failed to create $pth. Check your permissions."
+    log::error "Failed to create $pth. Check your permissions."
     return 1
   }
 }
 
 curl::get(){
   local url="$1"
-  logger::info "Downloading $url\n"
+  log::info "Downloading $url\n"
   # 2024-04 Github still does not offer tls 1.3
   curl --proto '=https' --tlsv1.2 -sSfL --compressed "$url"
 }
