@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail -o monitor
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
-# Tarmac - a very small piece of shcript to scaffold macos machines
 # (c) 2024 Farcloser <apostasie@farcloser.world>
-# (c) 2019 Dubo Dubon Duponey <dubodubonduponey+github@pm.me>
 # Distributed under the terms of the MIT license
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 
