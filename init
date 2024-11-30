@@ -147,7 +147,7 @@ grep -q "POSH_TMP" "$HOME/.profile" || printf "export POSH_TMP=\"%s\"\n" "${POSH
 grep -q "POSH_CACHE" "$HOME/.profile" || printf "export POSH_CACHE=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/cache}" >> "$HOME/.profile"
 grep -q "POSH_LOG" "$HOME/.profile" || printf "export POSH_LOG=\"%s\"\n" "${POSH_TMP:-\$HOME/transient/log}" >> "$HOME/.profile"
 # shellcheck disable=SC2016
-grep -q 'while read -r line; do . "$line"; done < <(ls "$HOME"/.posh_*)' "$HOME/.profile" || printf 'while read -r line; do . "$line"; done < <(ls "$HOME"/.posh_*)'"\n" >> "$HOME/.profile"
+grep -q 'while read -r line; do . "$line"; done < <(ls "$HOME"/.posh_*' "$HOME/.profile" || printf 'while read -r line; do . "$line"; done < <(ls "$HOME"/.posh_*)'"\n" >> "$HOME/.profile"
 
 [ -e "$HOME/.posh_secrets" ] || {
   cat <<-EOF > "$HOME/.posh_secrets"
@@ -159,6 +159,13 @@ set -o errexit -o nounset -o pipefail -o monitor
 # ★ MIT License         ★
 # ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★
 
+# NOTE
+# https://gist.github.com/willgarcia/7347306870779bfa664e
+# > Github settings
+# > Developper settings
+# > Personal access tokens
+# > Tokens (classic)
+# No scope, no expiration
 EOF
 }
 grep -q "HOMEBREW_GITHUB_API_TOKEN" "$HOME/.posh_secrets" || printf "export HOMEBREW_GITHUB_API_TOKEN=\"%s\"\n" "$HOMEBREW_GITHUB_API_TOKEN" >> "$HOME/.posh_secrets"
