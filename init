@@ -90,7 +90,14 @@ fs::ensuredir "${POSH_TMP:-$HOME/transient/tmp}/homebrew"
 fs::ensuredir "${POSH_CACHE:-$HOME/transient/cache}/homebrew"
 fs::ensuredir "${POSH_LOG:-$HOME/transient/log}/homebrew"
 
-curl::get https://github.com/Homebrew/brew/tarball/master 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN:-$HOME/Applications}/homebrew"
+# The Homebrew release this bootstraps, as a tag and the commit it names: the
+# tarball is fetched by commit, so what lands is that release and nothing
+# newer, and Renovate moves the pair (see renovate.json). brew updates itself
+# from there.
+BREW_TAG="7.0.9"
+BREW_REV="cdc1ca503231b9a96da64526774915d913c3ec9f"
+logger::info "Installing Homebrew $BREW_TAG"
+curl::get "https://github.com/Homebrew/brew/tarball/$BREW_REV" 2>/dev/null | tar xz --strip 1 -C "${POSH_BIN:-$HOME/Applications}/homebrew"
 
 if [ ! -f "${POSH_BIN:-$HOME/Applications}/homebrew/bin/brew" ]; then
   logger::error "Failed to retrieve homebrew from github. Not sure what went wrong."
