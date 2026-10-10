@@ -10,15 +10,13 @@ readonly root
 
 . "$root"/lib/log.sh
 . "$root"/lib/utils.sh
-. "$root"/lib/lint.sh
-
-# Linting
-log::info "Linting"
-lint::shell init ./*.sh ./lib/*.sh
-log::info "Linting successful"
 
 log::info "Testing unattended forced install"
 
+# The install goes into a throwaway HOME. Under the hermetic PATH the recipes
+# set up, coreutils and curl are aqua's shims, which find aqua's root through
+# HOME unless AQUA_ROOT_DIR names it: pin it from the real HOME first.
+export AQUA_ROOT_DIR="${AQUA_ROOT_DIR:-$HOME/.local/share/aquaproj-aqua}"
 HOME="$(portable::mktemp tarmac)"
 export HOME
 

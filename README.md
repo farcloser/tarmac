@@ -10,13 +10,15 @@ and will seed `.profile`.
 Run:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.github.com/farcloser/tarmac/master/init)"
-
-# Alternatively, get a specific version:
-# bash -c "$(curl -fsSL https://raw.github.com/farcloser/tarmac/v1.0.0/init)"
+bash -c "$(curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/farcloser/tarmac/main/init)"
 ```
 
-... or clone it the git way, then call `./init` inside the clone.
+To run a specific release instead of `main`, replace `main` in that URL with a tag from
+the [releases](https://github.com/farcloser/tarmac/releases). Or clone it the git way,
+then call `./init` inside the clone.
+
+The Homebrew it installs is a pinned release (`BREW_TAG` in `init`, fetched by commit),
+kept current by Renovate; `brew update` moves it on from there.
 
 You will be prompted for a GitHub token, and optionally a `bin`, `tmp`, `cache` and `log` path.
 
@@ -46,7 +48,14 @@ Or any other way to set up the rest of your laptop environment on top of brew.
 
 ## Development
 
-You need shellcheck (`brew install shellcheck`).
+The repository is governed by [limen](https://github.com/farcloser/limen); install it
+through [limen-install](https://github.com/farcloser/limen-install), then:
+
+```bash
+just lint
+just fix
+just test   # a real install into a throwaway HOME; macOS only
+```
 
 Note that `-o errtrace -o functrace` are not recognized by zsh, and that `-o nounset`
 will trip brew bash completion.
