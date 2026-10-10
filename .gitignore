@@ -1,3 +1,8 @@
 .DS_Store
 .idea
 _*
+
+# Required by limen (book/mandatory-files.md, ".gitignore").
+/build
+/_scratch
+.claude
