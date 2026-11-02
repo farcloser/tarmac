@@ -15,11 +15,9 @@ require (
 	github.com/alecthomas/kong v1.16.1 // indirect
 	github.com/containerd/typeurl/v2 v2.3.0 // indirect
 	github.com/fatih/color v1.15.0 // indirect
-	github.com/fogleman/gg v1.3.0 // indirect
-	github.com/forkcloser/dot v1.1.1 // indirect
-	github.com/forkcloser/go-graphviz v0.3.1 // indirect
+	github.com/forkcloser/dot v1.3.1 // indirect
+	github.com/forkcloser/go-graphviz v0.5.2 // indirect
 	github.com/forkcloser/godolint v0.2.0 // indirect
-	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/lmittmann/tint v1.2.1 // indirect
 	github.com/magefile/mage v1.15.0 // indirect
@@ -32,9 +30,9 @@ require (
 	github.com/sirupsen/logrus v1.10.1 // indirect
 	github.com/tetratelabs/wazero v1.12.0 // indirect
 	github.com/vbatts/git-validation v1.2.2 // indirect
-	golang.org/x/image v0.46.0 // indirect
-	golang.org/x/sys v0.48.0 // indirect
-	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/image v0.47.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 	google.golang.org/protobuf v1.36.12 // indirect
 	mvdan.cc/sh/v3 v3.14.1 // indirect
 )
