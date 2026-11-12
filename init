@@ -94,8 +94,8 @@ fs::ensuredir "${POSH_LOG:-$HOME/transient/log}/homebrew"
 # tarball is fetched by commit, so what lands is that release and nothing
 # newer, and Renovate moves the pair (see renovate.json). brew updates itself
 # from there.
-BREW_TAG="7.0.12"
-BREW_REV="bf464f57275cae0be106b43d190c98564ac59b0e"
+BREW_TAG="7.0.13"
+BREW_REV="bc63375ac3a4d6debb1ceb441ae6e22854f0909a"
 logger::info "Installing Homebrew $BREW_TAG"
 curl::get "https://github.com/Homebrew/brew/tarball/$BREW_REV" 2>/dev/null | tar xz --strip-components 1 -C "${POSH_BIN:-$HOME/Applications}/homebrew"
 
