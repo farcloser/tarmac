@@ -17,8 +17,9 @@ To run a specific release instead of `main`, replace `main` in that URL with a t
 the [releases](https://github.com/farcloser/tarmac/releases). Or clone it the git way,
 then call `./init` inside the clone.
 
-The Homebrew it installs is a pinned release (`BREW_TAG` in `init`, fetched by commit),
-kept current by Renovate; `brew update` moves it on from there.
+The Homebrew it installs is a pinned release (`BREW_TAG` in `init`), fetched with git at
+the commit the tag names, so git holds every file to the pin. Renovate keeps the pin
+current; `brew update` moves the install on from there.
 
 You will be prompted for a GitHub token, and optionally a `bin`, `tmp`, `cache` and `log` path.
 
