@@ -45,13 +45,6 @@ fs::ensuredir(){
   }
 }
 
-curl::get(){
-  local url="$1"
-  logger::info "Downloading $url\n"
-  # 2024-04 Github still does not offer tls 1.3
-  curl --proto '=https' --tlsv1.2 -sSfL --compressed "$url"
-}
-
 install::commandlinetools(){
   while ! git --help 1>/dev/null 2>&1; do
     logger::warning "You need to install XCode command line tools. You should be prompted to do so now."
@@ -90,16 +83,28 @@ fs::ensuredir "${POSH_TMP:-$HOME/transient/tmp}/homebrew"
 fs::ensuredir "${POSH_CACHE:-$HOME/transient/cache}/homebrew"
 fs::ensuredir "${POSH_LOG:-$HOME/transient/log}/homebrew"
 
-# The Homebrew release this bootstraps, as a tag and the commit it names: the
-# tarball is fetched by commit, so what lands is that release and nothing
-# newer, and Renovate moves the pair (see renovate.json). brew updates itself
-# from there.
+# The Homebrew release this bootstraps, as a tag and the commit it names,
+# fetched with git: git names every object by its content, so what lands is
+# that commit or the fetch fails. Renovate moves the pair (see renovate.json).
+# The repository is configured the way `brew update` configures one it has to
+# create, so brew updates itself from there.
 BREW_TAG="7.0.13"
 BREW_REV="bc63375ac3a4d6debb1ceb441ae6e22854f0909a"
+brew_home="${POSH_BIN:-$HOME/Applications}/homebrew"
 logger::info "Installing Homebrew $BREW_TAG"
-curl::get "https://github.com/Homebrew/brew/tarball/$BREW_REV" 2>/dev/null | tar xz --strip-components 1 -C "${POSH_BIN:-$HOME/Applications}/homebrew"
+git init -q "$brew_home"
+git -C "$brew_home" config --bool core.autocrlf false
+git -C "$brew_home" config --bool core.symlinks true
+git -C "$brew_home" config remote.origin.url "https://github.com/Homebrew/brew"
+git -C "$brew_home" config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+git -C "$brew_home" config fetch.prune true
+git -C "$brew_home" fetch -q --depth 1 origin "$BREW_REV"
+git -C "$brew_home" reset -q --hard FETCH_HEAD
+# brew resolves origin's default branch before its first fetch, and git
+# reports an error on the missing reference: name it here.
+git -C "$brew_home" symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/main
 
-if [ ! -f "${POSH_BIN:-$HOME/Applications}/homebrew/bin/brew" ]; then
+if [ "$(git -C "$brew_home" rev-parse HEAD)" != "$BREW_REV" ] || [ ! -f "$brew_home/bin/brew" ]; then
   logger::error "Failed to retrieve homebrew from github. Not sure what went wrong."
   exit 1
 fi

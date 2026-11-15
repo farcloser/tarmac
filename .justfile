@@ -8,7 +8,7 @@ lint: do::lint::default
 fix: do::fix::default
 # Run test.sh: a real, unattended Homebrew install into a throwaway HOME.
 # macOS only (xcode-select, the brew bottles), a no-op elsewhere; it needs
-# the network for the brew tarball and the two completion formulas.
+# the network for the brew repository and the two completion formulas.
 test:
     #!/usr/bin/env bash
     set -euo pipefail
