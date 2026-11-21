@@ -88,8 +88,8 @@ fs::ensuredir "${POSH_LOG:-$HOME/transient/log}/homebrew"
 # that commit or the fetch fails. Renovate moves the pair (see renovate.json).
 # The repository is configured the way `brew update` configures one it has to
 # create, so brew updates itself from there.
-BREW_TAG="7.0.13"
-BREW_REV="bc63375ac3a4d6debb1ceb441ae6e22854f0909a"
+BREW_TAG="7.0.14"
+BREW_REV="c3286d37c37f71b186a7e6647092bf2b56d1d690"
 brew_home="${POSH_BIN:-$HOME/Applications}/homebrew"
 logger::info "Installing Homebrew $BREW_TAG"
 git init -q "$brew_home"
